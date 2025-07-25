@@ -1,10 +1,22 @@
 let focusedIndex = -1;
 
-// WANT: 折りたたみ内のリンク（関連する質問）も除外
 function getLinks() {
-	const links = Array.from(document.querySelectorAll("#rso a")).filter((link) =>
-		link.querySelector("h3"),
+	const links = Array.from(document.querySelectorAll("#rso a")).filter(
+		(link) => {
+			if (!link.querySelector("h3")) {
+				return false;
+			}
+
+			// 関連する質問などを除外
+			const relatedQuestionContainer = link.closest("[data-initq]");
+			if (relatedQuestionContainer) {
+				return false;
+			}
+
+			return true;
+		},
 	);
+
 	return links;
 }
 
