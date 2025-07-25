@@ -32,6 +32,46 @@ function focusLink(index) {
 	}
 }
 
+// 検索結果が読み込まれた時に最初のリンクにフォーカス
+function initializeFocus() {
+	const links = getLinks();
+	if (links.length > 0 && focusedIndex === -1) {
+		focusLink(0);
+	}
+}
+
+// DOMの変更を監視して検索結果の読み込みを検出
+function observeSearchResults() {
+	const observer = new MutationObserver((mutations) => {
+		mutations.forEach((mutation) => {
+			// 新しいノードが追加された場合
+			if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+				// 検索結果エリアに変更があった場合
+				const hasSearchResults = Array.from(mutation.addedNodes).some(
+					(node) =>
+						node.nodeType === Node.ELEMENT_NODE &&
+						(node?.querySelector("#rso") || node.id === "rso"),
+				);
+
+				if (hasSearchResults) {
+					// 少し遅延を入れて検索結果が完全に読み込まれるのを待つ
+					setTimeout(initializeFocus, 100);
+				}
+			}
+		});
+	});
+
+	// 検索結果エリアとbody全体を監視
+	const searchContainer = document.querySelector("#main") || document.body;
+	observer.observe(searchContainer, {
+		childList: true,
+		subtree: true,
+	});
+
+	// 初期読み込み時にも実行
+	setTimeout(initializeFocus, 500);
+}
+
 document.addEventListener("keydown", (e) => {
 	if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
 		if (e.key === "Escape") {
@@ -58,3 +98,10 @@ document.addEventListener("keydown", (e) => {
 			break;
 	}
 });
+
+// ページ読み込み時に初期化
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", observeSearchResults);
+} else {
+	observeSearchResults();
+}
