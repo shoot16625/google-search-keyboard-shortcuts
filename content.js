@@ -38,6 +38,7 @@ function focusLink(index) {
 		if (h3) {
 			h3.style.textDecoration = "underline";
 			h3.style.textDecorationColor = "red";
+			h3.style.textDecorationThickness = "4px";
 		}
 		links[index].scrollIntoView({ behavior: "smooth", block: "center" });
 		focusedIndex = index;
