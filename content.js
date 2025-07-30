@@ -82,7 +82,7 @@ function observeSearchResults() {
 	});
 
 	// 初期読み込み時にも実行
-	setTimeout(initializeFocus, 500);
+	setTimeout(initializeFocus, 100);
 }
 
 document.addEventListener("keydown", (e) => {
