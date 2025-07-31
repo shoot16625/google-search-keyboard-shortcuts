@@ -40,7 +40,14 @@ function focusLink(index) {
 			h3.style.textDecorationColor = "red";
 			h3.style.textDecorationThickness = "4px";
 		}
-		links[index].scrollIntoView({ behavior: "smooth", block: "center" });
+
+		// 画面からはみ出しそうになったときだけスクロール
+		const rect = links[index].getBoundingClientRect();
+		const buffer = 20; // 画面端からの余白(px)
+		if (rect.top < buffer || rect.bottom > window.innerHeight - buffer) {
+			links[index].scrollIntoView({ behavior: "smooth", block: "center" });
+		}
+
 		focusedIndex = index;
 	}
 }
